@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'quiz.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 Quiz quiz = Quiz();
 
@@ -39,6 +40,53 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
+/*  void checkAnswer(bool pickedAnswer) {
+    bool correctAnswer = quiz.getCorrectAnswer();
+    setState(() {
+      if (pickedAnswer == correctAnswer) {
+        scoreKeeper.add(const Icon(
+          Icons.check,
+          color: Colors.green,
+        ));
+      } else {
+        scoreKeeper.add(const Icon(
+          Icons.close,
+          color: Colors.red,
+        ));
+      }
+      quiz.nextQuestion();
+    });
+  }*/
+  void checkAnswer(bool pickedAnswer) {
+    bool correctAnswer = quiz.getCorrectAnswer();
+
+    setState(() {
+      if (quiz.isFinished() == true) {
+        //alert
+        Alert(
+                context: context,
+                title: 'Completed!',
+                desc: 'You\'ve completed the quiz!')
+            .show();
+        quiz.reset();
+        scoreKeeper = [];
+      } else {
+        if (pickedAnswer == correctAnswer) {
+          scoreKeeper.add(const Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+        } else {
+          scoreKeeper.add(const Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+        }
+        quiz.nextQuestion();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -70,16 +118,7 @@ class _QuizPageState extends State<QuizPage> {
                 style: TextStyle(color: Colors.white, fontSize: 20.0),
               ),
               onPressed: () {
-                bool correctAnswer = quiz.getCorrectAnswer();
-                // if (correctAnswer == true) {
-                if (correctAnswer) {
-                  print('correct');
-                } else {
-                  print('incorrect');
-                }
-                setState(() {
-                  quiz.nextQuestion();
-                });
+                checkAnswer(true);
               },
             ),
           ),
@@ -92,16 +131,7 @@ class _QuizPageState extends State<QuizPage> {
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               ),
               onPressed: () {
-                bool correctAnswer = quiz.getCorrectAnswer();
-                // if (correctAnswer == false) {
-                if (!correctAnswer) {
-                  print('correct');
-                } else {
-                  print('incorrect');
-                }
-                setState(() {
-                  quiz.nextQuestion();
-                });
+                checkAnswer(false);
               },
               child: const Text(
                 'False',
